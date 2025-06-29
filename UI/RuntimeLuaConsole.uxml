@@ -1,0 +1,17 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Runtime%20Lua%20Console/UI/ConsoleStyle.uss?fileID=7433441132597879392&amp;guid=22c5de3ea91790b429cfeca70bb69a74&amp;type=3#ConsoleStyle" />
+    <engine:VisualElement name="OuterContainer" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0.78); flex-direction: column; max-height: none; flex-basis: 50%; height: 50%;">
+        <engine:ScrollView style="flex-grow: 1;">
+            <engine:Label text="Console Log&#10;" name="ConsoleOutputLabel" style="color: rgb(255, 255, 255); -unity-font-definition: url(&quot;project://database/Assets/Runtime%20Lua%20Console/UI/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&amp;guid=54f8dda1f28bb094e81988e83bd6af89&amp;type=3#NotInter-Regular&quot;); flex-grow: 1; flex-shrink: 1;" />
+        </engine:ScrollView>
+        <engine:ScrollView name="InputScrollView" style="max-height: 200px; justify-content: center; align-items: stretch; flex-direction: column;">
+            <engine:VisualElement style="flex-grow: 1; background-color: rgb(255, 255, 255);">
+                <engine:Label text="Placeholder" name="TextOverlay" style="position: absolute; right: 0; left: 0; bottom: 0; top: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 11.5px; padding-right: 12px; padding-bottom: 10px; padding-left: 13.5px;" />
+                <engine:TextField name="ConsoleInputField" style="margin-top: 0; margin-right: 0; margin-left: 0; margin-bottom: 0; padding-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; color: rgba(255, 0, 0, 0);" />
+            </engine:VisualElement>
+        </engine:ScrollView>
+        <engine:ScrollView>
+            <engine:Label text="Label" name="SuggestionsLabel" style="color: rgb(255, 255, 255);" />
+        </engine:ScrollView>
+    </engine:VisualElement>
+</engine:UXML>
