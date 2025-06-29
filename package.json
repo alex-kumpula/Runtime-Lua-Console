@@ -1,0 +1,16 @@
+{
+  "name": "com.daisychaingames.runtime-lua-console",
+  "version": "1.0.0",
+  "displayName": "Runtime Lua Console",
+  "description": "A runtime dev console that uses Lua as its core. Requires MoonSharp 2.0 or greater.",
+  "unity": "6000.0",
+  "documentationUrl": "https://github.com/alex-kumpula/Runtime-Lua-Console",
+  "keywords": [
+    "Console",
+    "Runtime",
+    "Lua"
+  ],
+  "author": {
+    "name": "Alex Kumpula"
+  }
+}
