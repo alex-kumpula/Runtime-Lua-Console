@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using MoonSharp.Interpreter;
-using Unity.VisualScripting;
 using DCG.RuntimeConsole.Lua;
+using System.Linq;
 
 namespace DCG.RuntimeConsole
 {
@@ -75,7 +75,7 @@ namespace DCG.RuntimeConsole
                 suggestionsLabel.text = closestSuggestion;
 
                 string[] allSuggestions = luaSuggestor.GetSuggestions(input, cursor);
-                string allSuggestionsSeparated = allSuggestions.ToSeparatedString("\n");
+                string allSuggestionsSeparated = string.Join("\n", allSuggestions);
                 suggestionsLabel.text = allSuggestionsSeparated;
                 Debug.Log(allSuggestionsSeparated); // For debug
             });
