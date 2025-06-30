@@ -2,17 +2,19 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using MoonSharp.Interpreter;
 using DCG.RuntimeConsole.Lua;
+using UnityEngine.InputSystem;
 using System.Linq;
+using System;
 
 namespace DCG.RuntimeConsole
 {
     public class ConsoleUIController : MonoBehaviour
     {
         [SerializeField]
-        UIDocument runtimeLuaConsoleUIDocument;
+        private InputActionReference showHideToggleActionReference;
 
         [SerializeField]
-        VisualTreeAsset suggestionsListUIAsset;
+        private UIDocument runtimeLuaConsoleUIDocument;
 
         private ConsoleEnvironmentLua consoleEnvironment;
         private LuaSyntaxHighlighter syntaxHighlighter = new();
@@ -22,13 +24,80 @@ namespace DCG.RuntimeConsole
         private Label outputLabel;
         private Label suggestionsLabel;
 
-        void Start()
-        {
-            // Create the console environment
-            ConsoleEnvironmentLua consoleLuaEnvironment = new();
-            this.consoleEnvironment = consoleLuaEnvironment;
-            this.consoleEnvironment.OutputReceived += this.AppendOutput;
+        private InputAction showHideToggleAction;
 
+        #region Public Properties
+        /// <summary>
+        /// Whether or not the console is currently hidden.
+        /// </summary>
+        public bool IsHidden
+        {
+            get { return this.runtimeLuaConsoleUIDocument.rootVisualElement.style.display == DisplayStyle.None; }
+        }
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Hides the console.
+        /// </summary>
+        public void HideConsole()
+        {
+            this.runtimeLuaConsoleUIDocument.rootVisualElement.style.display = DisplayStyle.None;
+        }
+
+        /// <summary>
+        /// Shows the console.
+        /// </summary>
+        public void ShowConsole()
+        {
+            this.runtimeLuaConsoleUIDocument.rootVisualElement.style.display = DisplayStyle.Flex;
+        }
+        #endregion
+
+        #region Unity Loop Methods
+        private void Start()
+        {
+            this.FindUIElements();
+            this.ConfigureUIElements();
+            this.RegisterUICallbacks();
+            this.CreateConsoleEnvironment();
+            this.BindDefaultLuaFunctions();
+
+            this.HideConsole();
+        }
+
+        private void OnEnable()
+        {
+            this.RegisterVisibilityToggleCallback();
+        }
+
+        private void OnDisable()
+        {
+            this.DeregisterVisibilityToggleCallback();
+        }
+        #endregion
+
+        #region Callbacks
+        private void OnShowHideTogglePerformed(InputAction.CallbackContext context)
+        {
+            // Dont do anything if the user has a textfield focused (ie. they are typing).
+            if (this.runtimeLuaConsoleUIDocument.rootVisualElement.focusController.focusedElement is TextField)
+                return;
+
+            if (this.IsHidden)
+            {
+                this.ShowConsole();
+            }
+            else
+            {
+                this.HideConsole();
+            }
+        }
+        #endregion
+
+        #region Private Methods
+        private void FindUIElements()
+        {
             // Find the Console Input Field
             this.consoleInputField = this.runtimeLuaConsoleUIDocument
                 .rootVisualElement
@@ -48,16 +117,18 @@ namespace DCG.RuntimeConsole
             this.suggestionsLabel = runtimeLuaConsoleUIDocument
                 .rootVisualElement
                 .Q<Label>("SuggestionsLabel");
+        }
 
+        private void ConfigureUIElements()
+        {
             // Update input field settings
             consoleInputField.selectAllOnFocus = false;
             consoleInputField.selectAllOnMouseUp = false;
             consoleInputField.multiline = true;
+        }
 
-            // Register example functions
-            UserData.RegisterType<SceneUtilities>();
-            this.consoleEnvironment.LuaScript.Globals["SceneUtils"] = UserData.Create(new SceneUtilities());
-
+        private void RegisterUICallbacks()
+        {
             // Register callbacks
             consoleInputField.RegisterValueChangedCallback(changeEvent =>
             {
@@ -114,23 +185,63 @@ namespace DCG.RuntimeConsole
                     evt.StopPropagation(); // block default behavior
                 }
             });
-
-            // Create suggestions popup
-            
         }
 
+        private void CreateConsoleEnvironment()
+        {
+            // Create the console environment
+            ConsoleEnvironmentLua consoleLuaEnvironment = new();
+            this.consoleEnvironment = consoleLuaEnvironment;
+            this.consoleEnvironment.OutputReceived += this.AppendOutput;
+        }
 
+        private void BindDefaultLuaFunctions()
+        {
+            // Bind example functions
+            UserData.RegisterType<SceneUtilities>();
+            this.consoleEnvironment.LuaScript.Globals["SceneUtils"] = UserData.Create(new SceneUtilities());
+        }
 
+        private void RegisterVisibilityToggleCallback()
+        {
+            if (
+                this.showHideToggleActionReference != null
+                && this.showHideToggleActionReference.action != null
+            )
+            {
+                this.showHideToggleAction = this.showHideToggleActionReference.action;
+            }
+            else
+            {
+                this.showHideToggleAction = new InputAction(
+                    name: "Toggle Console Visibility",
+                    type: InputActionType.Button
+                );
+                this.showHideToggleAction.AddBinding("<Keyboard>/backquote");
+                this.showHideToggleAction.Enable();
+            }
 
-        void AppendOutput(string message)
+            this.showHideToggleAction.performed += this.OnShowHideTogglePerformed;
+        }
+
+        private void DeregisterVisibilityToggleCallback()
+        {
+            if (this.showHideToggleAction != null)
+            {
+                this.showHideToggleAction.performed -= this.OnShowHideTogglePerformed;
+
+                if (this.showHideToggleActionReference == null)
+                {
+                    this.showHideToggleAction.Disable();
+                }
+            }
+        }
+
+        private void AppendOutput(string message)
         {
             this.outputLabel.text += "=> " + message + "\n";
         }
-
-
-
-
-
+        #endregion
     }
 
 

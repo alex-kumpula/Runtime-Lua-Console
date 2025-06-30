@@ -2,7 +2,8 @@
     "name": "RuntimeLuaConsole",
     "rootNamespace": "",
     "references": [
-        "MoonSharp"
+        "MoonSharp",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
