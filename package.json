@@ -4,6 +4,9 @@
   "displayName": "Runtime Lua Console",
   "description": "A runtime dev console that uses Lua as its core. Requires MoonSharp 2.0 or greater.",
   "unity": "6000.0",
+  "dependencies": {
+    "com.github.nothke.moonsharp": "https://github.com/nothke/moonsharp-unity-upm.git"
+  },
   "documentationUrl": "https://github.com/alex-kumpula/Runtime-Lua-Console",
   "keywords": [
     "Console",
